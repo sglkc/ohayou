@@ -1,0 +1,33 @@
+{
+	"name": "ohayou",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "svelte-kit dev",
+		"build": "svelte-kit build",
+		"package": "svelte-kit package",
+		"preview": "svelte-kit preview",
+		"prepare": "svelte-kit sync && npm run smui-theme",
+		"smui-theme": "smui-theme compile static/smui.css -i src/theme",
+		"lint": "prettier --check --plugin-search-dir=. . && eslint .",
+		"format": "prettier --write --plugin-search-dir=. ."
+	},
+	"devDependencies": {
+		"@smui/card": "^6.0.0-beta.16",
+		"@smui/circular-progress": "^6.0.0-beta.16",
+		"@smui/layout-grid": "^6.0.0-beta.16",
+		"@smui/paper": "^6.0.0-beta.16",
+		"@smui/ripple": "^6.0.0-beta.16",
+		"@smui/snackbar": "^6.0.0-beta.16",
+		"@smui/textfield": "^6.0.0-beta.16",
+		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/kit": "next",
+		"eslint": "^8.16.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-svelte3": "^4.0.0",
+		"prettier": "^2.6.2",
+		"prettier-plugin-svelte": "^2.7.0",
+		"smui-theme": "^6.0.0-beta.16",
+		"svelte": "^3.44.0"
+	},
+	"type": "module"
+}
