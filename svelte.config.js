@@ -4,15 +4,6 @@ import adapter from '@sveltejs/adapter-auto';
 const config = {
 	kit: {
 		adapter: adapter(),
-    vite: {
-      server: {
-        hmr: {
-          host: "localhost",
-          port: 3000,
-          overlay: true,
-        },
-      },
-    },
 	}
 };
 
