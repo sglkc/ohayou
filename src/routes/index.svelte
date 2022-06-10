@@ -1,29 +1,24 @@
 <script>
-  import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import anime from 'animejs';
+  import { scale, slide } from 'svelte/transition';
+  import Library from '$lib/Library.svelte';
   import Search from '$lib/Search.svelte';
   import Title from '$lib/Title.svelte';
   import '../app.css';
 
-  let opacity = 0;
+  let show = false;
 
-  onMount(() => {
-    anime({
-      targets: '#title',
-      translateY: 50,
-      delay: 500,
-      duration: 250,
-      direction: 'reverse',
-      easing: 'cubicBezier(0.7, -0.02, 0.44, 0.97)',
-      complete: () => {
-        opacity = 100;
-      }
-    });
-  });
+  setTimeout(() => (show = true), 250);
 </script>
 
-<Title id="title" />
-<div class="mb-5 transition-opacity" style="opacity: {opacity}">
-  <Search id="search" />
-</div>
+{#if show}
+  <div in:scale={{ delay: 50 }}>
+    <Title id="title" />
+  </div>
+  <div in:slide={{ delay: 750 }}>
+    <Search />
+    <hr class="mb-5 border-0" />
+    <div class="mx-auto w-fit">
+      <Library />
+    </div>
+  </div>
+{/if}

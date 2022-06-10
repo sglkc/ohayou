@@ -1,0 +1,101 @@
+<script>
+  import { fade, slide } from 'svelte/transition';
+  import { localBookmarks } from '$lib/stores';
+
+  $: bookmarks = $localBookmarks;
+
+  let bookmarkForm = false;
+  let bookmarkName = '';
+  let bookmarkUrl = '';
+  let bookmarkIcon = '';
+
+  function addBookmark(event) {
+    event.preventDefault();
+
+    if (!event.target.parentElement.checkValidity()) return;
+
+    const googleIcon = `https://s2.googleusercontent.com/s2/favicons?domain=${bookmarkUrl}&sz=32`;
+
+    bookmarks[bookmarks.length] = {
+      id: bookmarks.length,
+      name: bookmarkName,
+      url: bookmarkUrl,
+      icon: bookmarkIcon || googleIcon
+    };
+    bookmarkForm = false;
+    bookmarkName = '';
+    bookmarkUrl = '';
+    bookmarkIcon = '';
+  }
+
+  function removeBookmark(id) {
+    bookmarks.splice(id, 1);
+    bookmarks = bookmarks;
+  }
+</script>
+
+<div class="grid grid-cols-4 gap-2 font-sans text-center">
+  {#each bookmarks as bookmark, i (bookmark.id)}
+    <div
+      class="w-[93px] h-[84px] relative group p-3 rounded hover:scale-110 transition-transform"
+      transition:fade={{ duration: 200 }}
+    >
+      <button
+        class="invisible group-hover:visible absolute z-10 -top-3 right-0 scale-90 sm:scale-75 p-1 px-2.5 rounded-full bg-white/75"
+        on:click={() => removeBookmark(i)}
+      >
+        <i class="fa fa-close" />
+      </button>
+      <a href={bookmark.url}>
+        <img
+          class="mx-auto mb-2 rounded"
+          src={bookmark.icon}
+          alt={bookmark.name}
+          width="32"
+          height="32"
+        />
+        <p class="text-sm max-w-[8ch] truncate">{bookmark.name}</p>
+      </a>
+    </div>
+  {/each}
+  {#if bookmarks.length < 8}
+    <button
+      class="w-[93px] h-[84px] p-3 rounded hover:scale-110 transition-opacity opacity-25 hover:opacity-100"
+      on:click={() => (bookmarkForm = !bookmarkForm)}
+    >
+      <i class="fa fa-plus-square text-white fa-2x mx-auto mb-2" />
+      <p class="text-sm">New</p>
+    </button>
+  {/if}
+</div>
+{#if bookmarkForm}
+  <form transition:slide class="mt-5 flex rounded text-xs w-fit mx-auto" autocomplete="off">
+    <div class="flex flex-col">
+      <input
+        bind:value={bookmarkName}
+        class="bg-white/80 p-2 rounded-tl border-l-2 border-t-2 border-blue-400"
+        type="text"
+        placeholder="Name*"
+      />
+      <input
+        bind:value={bookmarkUrl}
+        class="bg-white/80 p-2 border-l-2 border-blue-400"
+        type="url"
+        placeholder="URL*"
+      />
+      <input
+        bind:value={bookmarkIcon}
+        class="bg-white/80 p-2 rounded-bl border-l-2 border-b-2 border-blue-400"
+        type="url"
+        placeholder="Icon URL"
+      />
+    </div>
+    <button
+      on:click={addBookmark}
+      class="bg-blue-400 px-4 rounded-r border-2 border-blue-400"
+      type="submit"
+    >
+      <i class="fa fa-angle-right fa-2x text-white" />
+    </button>
+  </form>
+{/if}
