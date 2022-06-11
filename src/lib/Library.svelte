@@ -9,7 +9,7 @@
   let bookmarkName = '';
   let bookmarkUrl = 'http://';
   let bookmarkIcon = '';
-  let bookmarkId = false;
+  let bookmarkId = 0;
 
   function submitBookmark(event) {
     const googleIcon = `https://s2.googleusercontent.com/s2/favicons?domain=${bookmarkUrl}&sz=32`;
