@@ -12,7 +12,7 @@
 
 {#if show}
   <div in:scale={{ delay: 50 }}>
-    <Title id="title" />
+    <Title />
   </div>
   <div in:slide={{ delay: 750 }}>
     <Search />
