@@ -1,7 +1,7 @@
 import { browser } from '$app/env';
 import { writable } from 'svelte/store';
 
-const initBookmarks = browser && localStorage?.bookmark ? JSON.parse(localStorage.bookmark) : [];
+const initBookmarks = browser && localStorage?.bookmarks ? JSON.parse(localStorage.bookmarks) : [];
 
 export const localBookmarks = writable(initBookmarks);
 

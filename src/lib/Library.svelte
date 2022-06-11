@@ -2,17 +2,16 @@
   import { fade, slide } from 'svelte/transition';
   import { localBookmarks } from '$lib/stores';
 
-  $: bookmarks = $localBookmarks;
+  $: localBookmarks.set(bookmarks);
 
+  let bookmarks = $localBookmarks;
   let bookmarkForm = false;
   let bookmarkName = '';
-  let bookmarkUrl = '';
+  let bookmarkUrl = 'http://';
   let bookmarkIcon = '';
 
   function addBookmark(event) {
     event.preventDefault();
-
-    if (!event.target.parentElement.checkValidity()) return;
 
     const googleIcon = `https://s2.googleusercontent.com/s2/favicons?domain=${bookmarkUrl}&sz=32`;
 
@@ -24,7 +23,7 @@
     };
     bookmarkForm = false;
     bookmarkName = '';
-    bookmarkUrl = '';
+    bookmarkUrl = 'http://';
     bookmarkIcon = '';
   }
 
@@ -69,19 +68,26 @@
   {/if}
 </div>
 {#if bookmarkForm}
-  <form transition:slide class="mt-5 flex rounded text-xs w-fit mx-auto" autocomplete="off">
+  <form
+    transition:slide
+    class="mt-5 flex rounded text-xs w-fit mx-auto"
+    autocomplete="off"
+    on:submit={addBookmark}
+  >
     <div class="flex flex-col">
       <input
         bind:value={bookmarkName}
-        class="bg-white/80 p-2 rounded-tl border-l-2 border-t-2 border-blue-400"
+        class="bg-white/80 p-2 rounded-tl border-l-2 border-t-2 border-blue-400 invalid:border-red-400"
         type="text"
         placeholder="Name*"
+        required
       />
       <input
         bind:value={bookmarkUrl}
-        class="bg-white/80 p-2 border-l-2 border-blue-400"
+        class="bg-white/80 p-2 border-l-2 border-blue-400 invalid:border-red-400"
         type="url"
         placeholder="URL*"
+        required
       />
       <input
         bind:value={bookmarkIcon}
@@ -90,11 +96,7 @@
         placeholder="Icon URL"
       />
     </div>
-    <button
-      on:click={addBookmark}
-      class="bg-blue-400 px-4 rounded-r border-2 border-blue-400"
-      type="submit"
-    >
+    <button class="bg-blue-400 px-4 rounded-r border-2 border-blue-400" type="submit">
       <i class="fa fa-angle-right fa-2x text-white" />
     </button>
   </form>
