@@ -10,6 +10,9 @@ const config = {
     }),
     paths: {
       base: '/ohayou'
+    },
+    prerender: {
+      default: true
     }
   },
   preprocess: [
