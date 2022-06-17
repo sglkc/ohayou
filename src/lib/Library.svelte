@@ -1,6 +1,6 @@
 <script>
   import { fade, slide } from 'svelte/transition';
-  import { localBookmarks } from '$lib/stores';
+  import { localBookmarks } from '$lib/stores/Bookmarks.js';
 
   $: localBookmarks.set(bookmarks);
 

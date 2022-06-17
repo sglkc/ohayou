@@ -1,13 +1,24 @@
 <script>
   import { slide } from 'svelte/transition';
-  import { localSearchEngines } from '$lib/stores';
+  import { localSearchEngines } from '$lib/stores/SearchEngine.js';
 
   $: localSearchEngines.set(searchEngines);
   $: defaultSearchEngine = searchEngines.engines[searchEngines.default];
+  $: {
+    (() => {
+      searchEngineAliases = {};
+
+      searchEngines.engines.forEach((engine) => {
+        searchEngineAliases[engine.alias] = engine;
+      });
+    })();
+  }
 
   let searchEngines = $localSearchEngines;
+  let searchEngineAliases = {};
   let searchEngineId = undefined;
   let searchEngineName = '';
+  let searchEngineAlias = '';
   let searchEngineUrl = 'https://';
   let settingsForm = false;
   let keyword = '';
@@ -15,7 +26,26 @@
 
   async function search(event) {
     if (!keyword.length) return;
-    const encoded = encodeURIComponent(keyword);
+    let encoded = encodeURIComponent(keyword);
+    const aliases = searchEngines.engines
+      .filter((engine) => {
+        return engine.alias;
+      })
+      .map((engine) => {
+        return '^' + engine.alias;
+      });
+
+    if (aliases.length) {
+      const regex = new RegExp(aliases.join('|'));
+      const match = keyword.match(regex)?.[0];
+
+      if (match) {
+        let encoded = encodeURIComponent(keyword.replace(match, ''));
+        window.open(searchEngineAliases[match].url + encoded, '_self');
+        return;
+      }
+    }
+
     window.open(defaultSearchEngine.url + encoded, '_self');
   }
 
@@ -32,10 +62,12 @@
     searchEngines.engines[id] = {
       id,
       name: searchEngineName,
+      alias: searchEngineAlias,
       url: searchEngineUrl
     };
     searchEngineId = undefined;
     searchEngineName = '';
+    searchEngineAlias = '';
     searchEngineUrl = 'https://';
   }
 
@@ -47,6 +79,7 @@
   function editSearchEngine(engine) {
     searchEngineId = engine.id;
     searchEngineName = engine.name;
+    searchEngineAlias = engine.alias;
     searchEngineUrl = engine.url;
   }
 </script>
@@ -74,7 +107,7 @@
     <form
       transition:slide
       on:submit|preventDefault={submitSearchEngine}
-      class="px-4 py-2 bg-sky-200/50 rounded mx-2 mt-3"
+      class="px-4 py-2 bg-sky-200/50 rounded mx-2 sm:mx-0 mt-3"
       autocomplete="off"
     >
       <div class="pb-2 flex justify-between">
@@ -94,6 +127,7 @@
             <tr>
               <th class="py-2 px-1 text-center">#</th>
               <th>Name</th>
+              <th>Alias</th>
               <th>URL</th>
               <th class="text-right">
                 <button on:click={addSearchEngine} type="button">
@@ -118,8 +152,17 @@
                         required
                       />
                     </td>
+                    <td>
+                      <input
+                        bind:value={searchEngineAlias}
+                        class="p-1 bg-slate-100 rounded outline-0 border-2 border-slate-300"
+                        type="text"
+                        size="2"
+                        placeholder="Alias"
+                      />
+                    </td>
                   {/if}
-                  <td colspan={urlfocus ? '3' : '1'}>
+                  <td colspan={urlfocus ? '4' : '1'}>
                     <input
                       bind:value={searchEngineUrl}
                       on:focus={() => (urlfocus = true)}
@@ -127,7 +170,7 @@
                       class:min-w-full={urlfocus}
                       class="p-1 bg-slate-100 rounded outline-0 border-2 border-slate-300 invalid:border-red-400"
                       type="url"
-                      size="12"
+                      size="14"
                       placeholder="URL*"
                       required
                     />
@@ -145,6 +188,7 @@
                 <tr>
                   <td class="py-2 text-center">{id + 1}.</td>
                   <td>{engine.name}</td>
+                  <td>{engine.alias || 'None'}</td>
                   <td class="max-w-[12ch] truncate">{engine.url}</td>
                   <td class="text-right">
                     <button on:click={() => editSearchEngine(engine)} class="mx-1" type="button">
@@ -160,9 +204,9 @@
           </tbody>
         </table>
       </div>
-      <small class="text-xs font-extralight"
-        >* Search query will be inserted at the end of URL</small
-      >
+      <small class="text-xs font-extralight">
+        * Search query will be inserted at the end of URL
+      </small>
     </form>
   {/if}
 </div>
