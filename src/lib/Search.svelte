@@ -72,6 +72,8 @@
   }
 
   function removeSearchEngine(id) {
+    if (searchEngines.engines.length === 1) return;
+
     searchEngines.engines.splice(id, 1);
     searchEngines.engines = searchEngines.engines;
   }
@@ -179,9 +181,11 @@
                     <button class="mx-1" type="submit">
                       <i class="fa fa-check" />
                     </button>
-                    <button on:click={() => removeSearchEngine(id)} type="button">
-                      <i class="fa fa-trash" />
-                    </button>
+                    {#if searchEngines.engines.length > 1}
+                      <button on:click={() => removeSearchEngine(id)} type="button">
+                        <i class="fa fa-trash" />
+                      </button>
+                    {/if}
                   </td>
                 </tr>
               {:else}
@@ -194,9 +198,11 @@
                     <button on:click={() => editSearchEngine(engine)} class="mx-1" type="button">
                       <i class="fa fa-pencil" />
                     </button>
-                    <button on:click={() => removeSearchEngine(id)} type="button">
-                      <i class="fa fa-trash" />
-                    </button>
+                    {#if searchEngines.engines.length > 1}
+                      <button on:click={() => removeSearchEngine(id)} type="button">
+                        <i class="fa fa-trash" />
+                      </button>
+                    {/if}
                   </td>
                 </tr>
               {/if}
